@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -465,99 +464,6 @@ app.get('/api/trackers/:id', (req, res) => {
     ...tracker,
     currentValue: calculateTrackerValue(tracker)
   });
-});
-
-// Suggest a tracker (uses AI behind the scenes)
-app.post('/api/trackers/suggest', async (req, res) => {
-  const { suggestion } = req.body;
-  
-  if (!suggestion) {
-    return res.status(400).json({ error: 'Suggestion is required' });
-  }
-  
-  try {
-    const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
-    const model = process.env.OLLAMA_MODEL || 'llama2';
-    
-    const prompt = `Create a real-time world statistics tracker based on this user suggestion: "${suggestion}". 
-
-Respond with ONLY valid JSON (no other text, no markdown, no explanation) with these exact fields:
-{
-  "title": "short catchy title (under 40 characters)",
-  "description": "brief explanation of what this tracks (under 100 characters)",
-  "category": "one of: Digital Activity, Social Media, Food, Internet, Human Activity, Commerce, Entertainment",
-  "baseValue": estimated_number_as_integer,
-  "icon": "single emoji"
-}
-
-Make the baseValue a realistic estimate of the actual number. For "right now" trackers use current concurrent users. For "today" trackers estimate daily totals.`;
-    
-    const response = await axios.post(`${ollamaUrl}/api/generate`, {
-      model: model,
-      prompt: prompt,
-      stream: false,
-      options: {
-        temperature: 0.7
-      }
-    });
-    
-    // Try to extract JSON from response
-    let trackerData;
-    try {
-      const jsonMatch = response.data.response.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        trackerData = JSON.parse(jsonMatch[0]);
-      } else {
-        trackerData = JSON.parse(response.data.response);
-      }
-    } catch (parseError) {
-      console.error('Failed to parse Ollama response:', response.data.response);
-      throw new Error('Invalid response format from AI');
-    }
-    
-    // Assign a color based on category
-    const categoryColors = {
-      'Digital Activity': '#3b82f6',
-      'Social Media': '#ec4899',
-      'Food': '#f59e0b',
-      'Internet': '#10b981',
-      'Human Activity': '#8b5cf6',
-      'Commerce': '#f59e0b',
-      'Entertainment': '#ef4444',
-      'Transportation': '#06b6d4',
-      'Technology': '#6366f1',
-      'Environment': '#059669'
-    };
-    
-    // Create a new tracker object
-    const newTracker = {
-      id: `suggested-${Date.now()}`,
-      title: trackerData.title,
-      description: trackerData.description,
-      icon: trackerData.icon || '📊',
-      category: trackerData.category || 'Digital Activity',
-      baseValue: parseInt(trackerData.baseValue) || 1000000,
-      variance: 0.15,
-      updateInterval: 3000,
-      color: categoryColors[trackerData.category] || '#6366f1',
-      suggested: true
-    };
-    
-    // Add to trackers array
-    trackers.push(newTracker);
-    
-    console.log(`✓ New tracker added: "${newTracker.title}"`);
-    
-    res.json({
-      ...newTracker,
-      currentValue: calculateTrackerValue(newTracker)
-    });
-  } catch (error) {
-    console.error('Error processing suggestion:', error.message);
-    res.status(500).json({ 
-      error: 'Failed to add tracker. Make sure Ollama is running with: ollama serve' 
-    });
-  }
 });
 
 // Health check

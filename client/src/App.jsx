@@ -3,7 +3,6 @@ import './App.css'
 import Header from './components/Header'
 import TrackerCard from './components/TrackerCard'
 import FilterBar from './components/FilterBar'
-import SuggestTracker from './components/SuggestTracker'
 
 function App() {
   const [trackers, setTrackers] = useState([])
@@ -42,12 +41,6 @@ function App() {
     fetchTrackers(category)
   }
 
-  // Handle tracker suggested
-  const handleTrackerSuggested = () => {
-    fetchTrackers(selectedCategory)
-    fetchCategories()
-  }
-
   useEffect(() => {
     fetchTrackers()
     fetchCategories()
@@ -80,8 +73,6 @@ function App() {
               onCategoryChange={handleCategoryChange}
             />
           </div>
-
-          <SuggestTracker onTrackerSuggested={handleTrackerSuggested} />
 
           {loading ? (
             <div className="loading">

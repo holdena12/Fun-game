@@ -4,12 +4,12 @@ A real-time web application that tracks fascinating statistics about what's happ
 
 ## Features
 
-- 📊 **12+ Pre-built Trackers** tracking various global activities
+- 📊 **32 Pre-built Trackers** tracking various global activities
 - 🔄 **Real-time Updates** - Numbers constantly update to show live estimates
-- 💡 **Suggest New Trackers** - Suggest trackers and see them added instantly
 - 🎨 **Beautiful Animated Counters** - Smooth number transitions and visual updates
 - 🎯 **Category Filtering** - Browse by Digital Activity, Social Media, Food, and more
 - 📱 **Fully Responsive** - Works perfectly on desktop and mobile
+- 🎨 **Neal.fun-inspired Design** - Playful, bold, and engaging interface
 
 ## Built-in Trackers
 
@@ -80,7 +80,6 @@ A real-time web application that tracks fascinating statistics about what's happ
 
 - Node.js (v16 or higher)
 - npm or yarn
-- Ollama (optional, for creating custom trackers)
 
 ### Installation
 
@@ -96,13 +95,7 @@ cd client && npm install
 cd ..
 ```
 
-3. (Optional) Start Ollama for AI features
-```bash
-ollama serve
-ollama pull llama2
-```
-
-4. Start the application
+3. Start the application
 ```bash
 npm run dev
 ```
@@ -131,32 +124,19 @@ The trackers use realistic estimates based on:
 - Visual indicators show when updates occur
 - Counters reset at midnight for daily trackers
 
-### Suggest Trackers
-
-Don't see what you're looking for? Suggest a new tracker:
-1. Type your suggestion in the suggestion box
-2. Click "Suggest"
-3. Your tracker gets added with realistic estimates
-4. Watch it update in real-time!
-
-Behind the scenes, Ollama helps generate realistic statistics for your suggestions.
-
 ## API Endpoints
 
 - `GET /api/trackers` - Get all trackers (optional ?category= filter)
 - `GET /api/trackers/:id` - Get a specific tracker's current value
 - `GET /api/categories` - Get all tracker categories
-- `POST /api/trackers/suggest` - Suggest a new tracker (processed with Ollama)
 - `GET /api/health` - Health check
 
 ## Configuration
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory (optional):
 
 ```env
 PORT=3000
-OLLAMA_URL=http://localhost:11434
-OLLAMA_MODEL=llama2
 ```
 
 ## Project Structure
